@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  back:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 1111:1111
+    env_file:
+      - ./src/.env
+    entrypoint: "sh /opt/services/geo-management/entrypoints/start-server.sh"
+    volumes:
+      - ./:/opt/services/geo-management
+      - ./src/static:/opt/services/geo-management/src/static
+      - ./src/media:/opt/services/geo-management/src/media
+    networks:
+      - db_network
+
+  db:
+    image: postgis/postgis:latest
+    container_name: test-task_db
+    restart: unless-stopped
+    labels:
+    - com.packtpub.compose.app=db-manager 
+    volumes:
+      - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data/storage/data:/var/lib/postgresql/data
+    networks:
+      - db_network
+    env_file:
+      - ./src/.env
+
+networks:
+  db_network:
+    driver: bridge

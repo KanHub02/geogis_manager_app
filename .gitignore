@@ -1,0 +1,16 @@
+.idea/
+*.pyc
+.venv/*
+venv/
+**__pycache__
+**/migrations/00*.py
+**/migrations/*__pycache__
+src/staticfiles/*
+src/media/*
+src/static/*
+src/.idea/*
+src/.env
+src/db.sqlite3
+storage/
+media/
+data/
