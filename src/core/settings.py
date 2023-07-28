@@ -6,8 +6,8 @@ import os
 
 from glob import glob
 
-GDAL_LIBRARY_PATH=glob('/usr/lib/libgdal.so.*')[0]
-GEOS_LIBRARY_PATH=glob('/usr/lib/libgeos_c.so.*')[0]
+GDAL_LIBRARY_PATH = glob("/usr/lib/libgdal.so.*")[0]
+GEOS_LIBRARY_PATH = glob("/usr/lib/libgeos_c.so.*")[0]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'django.contrib.gis',
+    "django.contrib.gis",
     *THIRD_PARTY_APPS,
     *LOCAL_APPS,
 ]
@@ -74,7 +74,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-#DATABASE settings
+# DATABASE settings
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
@@ -102,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#Languages
+# Languages
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"

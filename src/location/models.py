@@ -8,6 +8,13 @@ class Region(GeoBaseModel):
         max_length=255, null=False, blank=False, verbose_name="Название"
     )
 
+    class Meta:
+        verbose_name = "Регион"
+        verbose_name_plural = "Регионы"
+
+    def __str__(self) -> str:
+        return self.title
+
 
 class District(GeoBaseModel):
     region = models.ForeignKey(
@@ -21,6 +28,13 @@ class District(GeoBaseModel):
         max_length=255, null=False, blank=False, verbose_name="Название"
     )
 
+    class Meta:
+        verbose_name = "Район"
+        verbose_name_plural = "Районы"
+
+    def __str__(self) -> str:
+        return self.title
+
 
 class Canton(GeoBaseModel):
     district = models.ForeignKey(
@@ -31,11 +45,15 @@ class Canton(GeoBaseModel):
         verbose_name="Район",
     )
     title = models.CharField(
-        max_length=255,
-        null=False,
-        blank=False,
-        verbose_name="Название"
+        max_length=255, null=False, blank=False, verbose_name="Название"
     )
+
+    class Meta:
+        verbose_name = "Кантон"
+        verbose_name_plural = "Кантоны"
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Contour(GeoBaseModel):
@@ -46,3 +64,7 @@ class Contour(GeoBaseModel):
         blank=False,
         verbose_name="Кантон",
     )
+
+    class Meta:
+        verbose_name = "Контур"
+        verbose_name_plural = "Контуры"
