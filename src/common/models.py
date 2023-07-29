@@ -1,7 +1,6 @@
 import uuid
 
-from django.db import models
-from django.contrib.gis.db.models import PolygonField
+from django.contrib.gis.db import models
 
 
 class BaseModel(models.Model):
@@ -21,8 +20,8 @@ class BaseModel(models.Model):
 class GeoBaseModel(BaseModel):
     """Base model for models is using PolygonField"""
 
-    geometry = PolygonField(
-        null=False, blank=False, verbose_name="Гео позиция", geography=True
+    geometry = models.PolygonField(
+        null=False, blank=False, verbose_name="Геомотрия", geography=True
     )
 
     class Meta:

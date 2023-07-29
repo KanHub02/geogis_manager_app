@@ -23,6 +23,7 @@ class District(GeoBaseModel):
         null=False,
         blank=False,
         verbose_name="Регион",
+        related_name="district"
     )
     title = models.CharField(
         max_length=255, null=False, blank=False, verbose_name="Название"
@@ -43,14 +44,15 @@ class Canton(GeoBaseModel):
         null=False,
         blank=False,
         verbose_name="Район",
+        related_name="canton"
     )
     title = models.CharField(
         max_length=255, null=False, blank=False, verbose_name="Название"
     )
 
     class Meta:
-        verbose_name = "Кантон"
-        verbose_name_plural = "Кантоны"
+        verbose_name = "Округ"
+        verbose_name_plural = "Округи"
 
     def __str__(self) -> str:
         return self.title
@@ -63,6 +65,7 @@ class Contour(GeoBaseModel):
         null=False,
         blank=False,
         verbose_name="Кантон",
+        related_name="canton"
     )
 
     class Meta:
