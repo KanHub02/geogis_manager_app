@@ -21,7 +21,7 @@ class GeoBaseModel(BaseModel):
     """Base model for models is using PolygonField"""
 
     geometry = models.PolygonField(
-        null=False, blank=False, verbose_name="Геомотрия", geography=True
+        null=False, blank=False, verbose_name="Геометрия", geography=True
     )
 
     class Meta:

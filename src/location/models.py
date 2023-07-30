@@ -5,7 +5,11 @@ from common.models import GeoBaseModel
 
 class Region(GeoBaseModel):
     title = models.CharField(
-        max_length=255, null=False, blank=False, verbose_name="Название"
+        max_length=255,
+        null=False,
+        blank=False,
+        verbose_name="Название",
+        unique=True,
     )
 
     class Meta:
@@ -23,7 +27,7 @@ class District(GeoBaseModel):
         null=False,
         blank=False,
         verbose_name="Регион",
-        related_name="district"
+        related_name="districts",
     )
     title = models.CharField(
         max_length=255, null=False, blank=False, verbose_name="Название"
@@ -44,7 +48,7 @@ class Canton(GeoBaseModel):
         null=False,
         blank=False,
         verbose_name="Район",
-        related_name="canton"
+        related_name="cantons",
     )
     title = models.CharField(
         max_length=255, null=False, blank=False, verbose_name="Название"
@@ -65,7 +69,7 @@ class Contour(GeoBaseModel):
         null=False,
         blank=False,
         verbose_name="Кантон",
-        related_name="canton"
+        related_name="contours",
     )
 
     class Meta:

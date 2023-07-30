@@ -6,6 +6,7 @@ django-jazzmin==2.6.0
 djangorestframework==3.14.0
 gunicorn==21.2.0
 mypy-extensions==1.0.0
+numpy==1.25.1
 packaging==23.1
 pathspec==0.11.1
 platformdirs==3.9.1
