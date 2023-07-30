@@ -1,9 +1,20 @@
 from django.db.models import QuerySet
 
+from abc import ABC, abstractmethod
+
 from .models import Region, Canton, Contour, District
 
 
-class DistrictService:
+class AbstractSerice(ABC):
+    _model = None
+
+    @abstractmethod
+    def get_list(cls) -> QuerySet[_model]:
+        """Filtering django model and return queryset"""
+        raise NotImplementedError
+
+
+class DistrictService(AbstractSerice):
     _model = District
 
     @classmethod
@@ -15,7 +26,7 @@ class DistrictService:
         )
 
 
-class ContourService:
+class ContourService(AbstractSerice):
     _model = Contour
 
     @classmethod
@@ -27,7 +38,7 @@ class ContourService:
         )
 
 
-class CantonService:
+class CantonService(AbstractSerice):
     _model = Canton
 
     @classmethod
@@ -39,7 +50,7 @@ class CantonService:
         )
 
 
-class RegionService:
+class RegionService(AbstractSerice):
     _model = Region
 
     @classmethod

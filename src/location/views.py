@@ -13,6 +13,7 @@ from .schemas import ContourListSchema, CantonListSchema, DistrictListSchema, Re
 
 
 class ContourListView(generics.ListAPIView):
+    """This class view filter(optional) and returns a list of Contour, according to all standards GeoJson"""
     serializer_class = ContourSerializer
     filter_backends = [filters.DjangoFilterBackend]
     filterset_fields = ("canton__district", "canton__district__region")
@@ -23,6 +24,7 @@ class ContourListView(generics.ListAPIView):
 
 
 class DistrictListView(generics.ListAPIView):
+    """This class view returns a list of District, according to all standards GeoJson"""
     serializer_class = DistrictSerializer
     schema = DistrictListSchema()
 
@@ -31,6 +33,7 @@ class DistrictListView(generics.ListAPIView):
 
 
 class CantonListView(generics.ListAPIView):
+    """This class view returns a list of Canton, according to all standards GeoJson"""
     serializer_class = CantonSerializer
     schema = CantonListSchema()
 
@@ -39,6 +42,7 @@ class CantonListView(generics.ListAPIView):
 
 
 class RegionListView(generics.ListAPIView):
+    """This class view returns a list of Region, according to all standards GeoJson"""
     serializer_class = RegionSerializer
     schema = RegionListSchema()
 
