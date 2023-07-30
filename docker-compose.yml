@@ -17,6 +17,8 @@ services:
       - ./src/media:/opt/services/geo-management/src/media
     networks:
       - db_network
+    depends_on:
+      - db
 
   db:
     image: postgis/postgis:latest
@@ -25,12 +27,15 @@ services:
     labels:
     - com.packtpub.compose.app=db-manager 
     volumes:
-      - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./data/storage/data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d/
+      - database_volume:/var/lib/postgresql/data
     networks:
       - db_network
     env_file:
       - ./src/.env
+
+volumes:
+  database_volume:
 
 networks:
   db_network:
