@@ -6,6 +6,6 @@ from scripts.services import GeographyDataService
 
 
 class Command(BaseCommand):
-    def handle(self,  *args: Any, **options: Any):
+    def handle(self, *args: Any, **options: Any):
         service = GeographyDataService()
-        return service.get_data_execute()
+        return service.execute()

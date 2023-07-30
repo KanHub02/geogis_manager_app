@@ -8,22 +8,26 @@ from .utils import GetGeoDataExtra
 
 
 class GeographyDataService(GetGeoDataExtra):
-
-    def _create_two_cantons_for_jaiyl(self, path_to_geojson_file: str, district_title: str) -> None:
+    def _create_two_cantons(
+        self, path_to_geojson_file: str, district_title: str
+    ) -> None:
         district = self._model_disctrict.objects.filter(title=district_title).first()
         if not district:
             raise ValueError(f"District '{district_title}' not found.")
-        
+
         with open(path_to_geojson_file, "r") as data:
             data_json = json.load(data)
             features = data_json.get("features", [])
-            
+
             for feature in features:
                 properties = feature.get("properties", {})
-                title = properties.get("title")  
+                title = properties.get("title")
                 geometry = feature.get("geometry")
                 polygon_wtb = self._polygon_converter(geometry)
-                self._model_canton.objects.create(title=title, geometry=polygon_wtb, district=district)
+                canton = self._model_canton.objects.create(
+                    title=title, geometry=polygon_wtb, district=district
+                )
+                self._model_contour.objects.create(canton=canton, geometry=polygon_wtb)
 
     def _create_one_region(self, path_to_geojson_file: str) -> None:
         try:
@@ -84,10 +88,19 @@ class GeographyDataService(GetGeoDataExtra):
                         continue
         except Exception as e:
             logging.error(e)
-        
-    def get_data_execute(self) -> None:
+
+    def execute(self) -> None:
         self._create_one_region("./geojson/regions/kgz_regions.geojson")
         self._three_districts("./geojson/districts/kgz_disctricts.geojson")
-        self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/jaiyldata.geojson", district_title="Jaiyl")
-        self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/chuydata.geojson", district_title="Chui")
-        self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/alamudun.geojson", district_title="Alamüdün")
+        self._create_two_cantons(
+            path_to_geojson_file="./geojson/cantons/jaiyldata.geojson",
+            district_title="Jaiyl",
+        )
+        self._create_two_cantons(
+            path_to_geojson_file="./geojson/cantons/chuydata.geojson",
+            district_title="Chui",
+        )
+        self._create_two_cantons(
+            path_to_geojson_file="./geojson/cantons/alamudun.geojson",
+            district_title="Alamüdün",
+        )

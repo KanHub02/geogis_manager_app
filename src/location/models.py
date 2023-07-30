@@ -75,3 +75,6 @@ class Contour(GeoBaseModel):
     class Meta:
         verbose_name = "Контур"
         verbose_name_plural = "Контуры"
+
+    def __str__(self) -> str:
+        return f"Контур {self.canton.title}"

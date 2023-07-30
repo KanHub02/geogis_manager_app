@@ -2,8 +2,11 @@ asgiref==3.7.2
 black==23.7.0
 click==8.1.6
 Django==4.2.3
+django-filter==23.2
 django-jazzmin==2.6.0
 djangorestframework==3.14.0
+djangorestframework-gis==1.0
+geojson==3.0.1
 gunicorn==21.2.0
 mypy-extensions==1.0.0
 numpy==1.25.1
