@@ -1,48 +1,80 @@
 from typing import Union, List, Any, Dict
 
+import logging
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from location.models import Region, District, Canton, Contour
 
 import json
-from geojson import Polygon
+
+from .utils import GetGeoDataExtra
 
 
-class GetGeoDataCommandMixin:
-    _model_region = Region
-    _model_disctrict = District
-    _model_canton = Canton
-    _model_contour = Contour
+class GetGeoDataCommandMixin(GetGeoDataExtra):
+    def _create_one_region(self):
+        try:
+            with open("./kgz_regions.geojson", "r") as data:
+                data_text = data.read()
+                data_json = json.loads(data_text)
+                region_title = data_json.get("features")[2]["properties"].get("name")
+                polygon = data_json.get("features")[2]["geometry"]
+                polygon_wbt = self._polygon_converter(polygon)
+                self._model_region.objects.get_or_create(
+                    title=region_title, geometry=polygon_wbt
+                )
 
+        except Exception as e:
+            logging.error(e)
 
-    def _create_district(self, region_title: str, step: int):
-            region = self._model_region.objects.filter(title=region_title).first()
-            if region:
-                with open("./kgz_disctricts.geojson", "r") as data:
-                    data_text = data.read()
-                    data_json = json.loads(data_text)
-                    title = data_json.get("features")[step]["properties"].get("name_2")
-                    polygon = data_json.get("features")[step]["geometry"]
-                    polygon_wkb = GEOSGeometry(json.dumps(polygon), srid=4326)
-                    self._model_disctrict.objects.create(title=title, region=region, geometry=polygon_wkb)
+    def _three_districts(self):
+        try:
+            with open("./kgz_disctricts.geojson", "r") as data:
+                data_json = json.load(data)
 
+                region = self._model_region.objects.filter(title="Chuy").first()
+                if region:
+                    district_data = [
+                        {
+                            "index": 4,
+                            "title": data_json["features"][4]["properties"].get(
+                                "name_2"
+                            ),
+                            "geometry": data_json["features"][4]["geometry"],
+                        },
+                        {
+                            "index": 7,
+                            "title": data_json["features"][7]["properties"].get(
+                                "name_2"
+                            ),
+                            "geometry": data_json["features"][7]["geometry"],
+                        },
+                        {
+                            "index": 8,
+                            "title": data_json["features"][8]["properties"].get(
+                                "name_2"
+                            ),
+                            "geometry": data_json["features"][8]["geometry"],
+                        },
+                    ]
+
+                    for district_info in district_data:
+                        title = district_info["title"]
+                        geometry = district_info["geometry"]
+                        district = self._model_disctrict(title=title).DoesNotExist()
+                        if not district:
+                            self._model_disctrict.objects.get_or_create(
+                                title=title,
+                                region=region,
+                                geometry=self._polygon_converter(geometry),
+                            )
+                        continue
+        except Exception as e:
+            logging.error(e)
 
     def get_data_execute(self):
-        with open("./kgz_regions.geojson", "r") as data:
-            data_text = data.read()
-            data_json = json.loads(data_text)
-            len_of_regions = len(data_json.get("features"))
-            step = 0
-            for region in range(len_of_regions):
-                step += 1
-                polygon = data_json.get("features")[region]["geometry"]
-                region_title = data_json.get("features")[region]["properties"].get("name")
-                polygon_wkb = GEOSGeometry(json.dumps(polygon), srid=4326)
-                self._model_region.objects.get_or_create(
-                    title=region_title, geometry=polygon_wkb
-                )
-                self._create_district(region_title=region_title, step=step)
+        self._create_one_region()
+        self._three_districts()
 
 
 class Command(BaseCommand, GetGeoDataCommandMixin):

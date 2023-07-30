@@ -30,7 +30,7 @@ class District(GeoBaseModel):
         related_name="districts",
     )
     title = models.CharField(
-        max_length=255, null=False, blank=False, verbose_name="Название"
+        max_length=255, null=False, blank=False, verbose_name="Название", unique=True
     )
 
     class Meta:
@@ -51,7 +51,7 @@ class Canton(GeoBaseModel):
         related_name="cantons",
     )
     title = models.CharField(
-        max_length=255, null=False, blank=False, verbose_name="Название"
+        max_length=255, null=False, blank=False, verbose_name="Название", unique=True
     )
 
     class Meta:
