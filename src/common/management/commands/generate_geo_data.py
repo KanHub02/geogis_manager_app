@@ -1,12 +1,10 @@
-from typing import Union, List, Any, Dict
+from typing import Any
+
+import json
 
 import logging
 
-from django.contrib.gis.geos import GEOSGeometry, Point
 from django.core.management.base import BaseCommand
-from location.models import Region, District, Canton, Contour
-
-import json
 
 from .utils import GetGeoDataExtra
 
@@ -24,20 +22,14 @@ class GetGeoDataCommandMixin(GetGeoDataExtra):
             
             for feature in features:
                 properties = feature.get("properties", {})
-                title = properties.get("title")
-                if not title:
-                    raise ValueError("Canton title not found in GeoJSON properties.")
-                
+                title = properties.get("title")  
                 geometry = feature.get("geometry")
-                if not geometry:
-                    raise ValueError("Canton geometry not found in GeoJSON.")
-                
                 polygon_wtb = self._polygon_converter(geometry)
                 self._model_canton.objects.create(title=title, geometry=polygon_wtb, district=district)
 
-    def _create_one_region(self):
+    def _create_one_region(self, path_to_geojson_file: str) -> None:
         try:
-            with open("./kgz_regions.geojson", "r") as data:
+            with open(path_to_geojson_file, "r") as data:
                 data_text = data.read()
                 data_json = json.loads(data_text)
                 region_title = data_json.get("features")[2]["properties"].get("name")
@@ -50,9 +42,9 @@ class GetGeoDataCommandMixin(GetGeoDataExtra):
         except Exception as e:
             logging.error(e)
 
-    def _three_districts(self):
+    def _three_districts(self, path_to_geojson_file: str) -> None:
         try:
-            with open("./kgz_disctricts.geojson", "r") as data:
+            with open(path_to_geojson_file, "r") as data:
                 data_json = json.load(data)
 
                 region = self._model_region.objects.filter(title="Chuy").first()
@@ -60,10 +52,10 @@ class GetGeoDataCommandMixin(GetGeoDataExtra):
                     district_data = [
                         {
                             "index": 4,
-                            "title": data_json["features"][4]["properties"].get(
+                            "title": data_json["features"][5]["properties"].get(
                                 "name_2"
                             ),
-                            "geometry": data_json["features"][4]["geometry"],
+                            "geometry": data_json["features"][5]["geometry"],
                         },
                         {
                             "index": 7,
@@ -95,11 +87,16 @@ class GetGeoDataCommandMixin(GetGeoDataExtra):
         except Exception as e:
             logging.error(e)
 
-    def get_data_execute(self):
-        self._create_one_region()
-        self._three_districts()
+    def get_data_execute(self) -> None:
+        self._create_one_region("./geojson/regions/kgz_regions.geojson")
+        self._three_districts("./geojson/districts/kgz_disctricts.geojson")
+        self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/jaiyldata.geojson", district_title="Jaiyl")
+        self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/chuydata.geojson", district_title="Chui")
+        self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/alamudun.geojson", district_title="Alamüdün")
+
+        
 
 
 class Command(BaseCommand, GetGeoDataCommandMixin):
     def handle(self, *args: Any, **options: Any):
-        return self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/jaiyldata.geojson", district_title="Jaiyl")
+        return self.get_data_execute()
