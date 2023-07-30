@@ -2,7 +2,7 @@ from typing import Union, List, Any, Dict
 
 import logging
 
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.core.management.base import BaseCommand
 from location.models import Region, District, Canton, Contour
 
@@ -12,6 +12,29 @@ from .utils import GetGeoDataExtra
 
 
 class GetGeoDataCommandMixin(GetGeoDataExtra):
+
+    def _create_two_cantons_for_jaiyl(self, path_to_geojson_file: str, district_title: str) -> None:
+        district = self._model_disctrict.objects.filter(title=district_title).first()
+        if not district:
+            raise ValueError(f"District '{district_title}' not found.")
+        
+        with open(path_to_geojson_file, "r") as data:
+            data_json = json.load(data)
+            features = data_json.get("features", [])
+            
+            for feature in features:
+                properties = feature.get("properties", {})
+                title = properties.get("title")
+                if not title:
+                    raise ValueError("Canton title not found in GeoJSON properties.")
+                
+                geometry = feature.get("geometry")
+                if not geometry:
+                    raise ValueError("Canton geometry not found in GeoJSON.")
+                
+                polygon_wtb = self._polygon_converter(geometry)
+                self._model_canton.objects.create(title=title, geometry=polygon_wtb, district=district)
+
     def _create_one_region(self):
         try:
             with open("./kgz_regions.geojson", "r") as data:
@@ -62,7 +85,7 @@ class GetGeoDataCommandMixin(GetGeoDataExtra):
                         title = district_info["title"]
                         geometry = district_info["geometry"]
                         district = self._model_disctrict(title=title).DoesNotExist()
-                        if not district:
+                        if district:
                             self._model_disctrict.objects.get_or_create(
                                 title=title,
                                 region=region,
@@ -79,4 +102,4 @@ class GetGeoDataCommandMixin(GetGeoDataExtra):
 
 class Command(BaseCommand, GetGeoDataCommandMixin):
     def handle(self, *args: Any, **options: Any):
-        return self.get_data_execute()
+        return self._create_two_cantons_for_jaiyl(path_to_geojson_file="./geojson/cantons/jaiyldata.geojson", district_title="Jaiyl")
