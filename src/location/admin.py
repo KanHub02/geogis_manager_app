@@ -1,5 +1,8 @@
 from django.contrib import admin
 
+from leaflet.admin import LeafletGeoAdmin
+
+
 from .models import Canton, Contour, Region, District
 
 admin.site.register(Contour)
@@ -25,7 +28,7 @@ class CantonInline(admin.TabularInline):
     
 
 @admin.register(Region)
-class RegionAdmin(admin.ModelAdmin):
+class RegionAdmin(LeafletGeoAdmin):
     list_display = ["title", "id"]
     list_display_links = ["title", "id"]
     readonly_fields = ["id", "created_at", "updated_at"]
@@ -34,7 +37,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Canton)
-class CantonAdmin(admin.ModelAdmin):
+class CantonAdmin(LeafletGeoAdmin):
     list_display = ["title", "id"]
     list_display_links = ["title", "id"]
     readonly_fields = ["id", "created_at", "updated_at"]
@@ -43,7 +46,7 @@ class CantonAdmin(admin.ModelAdmin):
 
 
 @admin.register(District)
-class DistrictAdmin(admin.ModelAdmin):
+class DistrictAdmin(LeafletGeoAdmin):
     list_display = ["title", "id"]
     list_display_links = ["title", "id"]
     readonly_fields = ["id", "created_at", "updated_at"]
