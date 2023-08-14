@@ -78,3 +78,18 @@ class Contour(GeoBaseModel):
 
     def __str__(self) -> str:
         return f"Контур {self.canton.title}"
+
+
+class GeoObject(GeoBaseModel):
+    title = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        verbose_name="Название",
+        unique=True,
+    )
+
+    class Meta:
+        verbose_name = "Обьект"
+        verbose_name_plural = "Обьекты"
+    

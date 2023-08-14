@@ -3,7 +3,7 @@ from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
 
-from .models import Canton, Contour, Region, District
+from .models import Canton, Contour, Region, District, GeoObject
 
 admin.site.register(Contour)
 
@@ -53,3 +53,10 @@ class DistrictAdmin(LeafletGeoAdmin):
     fields = ["title", "geometry", "is_deleted"]
     inlines = [CantonInline]
 
+
+@admin.register(GeoObject)
+class GeoObjectAdmin(LeafletGeoAdmin):
+    list_display = ["title", "id"]
+    list_display_links = ["title", "id"]
+    readonly_fields = ["id", "created_at", "updated_at"]
+    fields = ["title", "geometry", "is_deleted"]

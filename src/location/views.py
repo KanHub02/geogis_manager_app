@@ -1,15 +1,19 @@
-from rest_framework import generics
+from rest_framework import generics, response, status
 from django_filters import rest_framework as filters
+
+import json
 
 from .serializers import (
     ContourSerializer,
     DistrictSerializer,
     RegionSerializer,
     CantonSerializer,
+    GeometryCreateSerializer
 )
 
 from .services import RegionService, ContourService, CantonService, DistrictService
 from .schemas import ContourListSchema, CantonListSchema, DistrictListSchema, RegionListSchema
+from .models import GeoObject
 
 
 class ContourListView(generics.ListAPIView):
@@ -48,3 +52,14 @@ class RegionListView(generics.ListAPIView):
 
     def get_queryset(self):
         return RegionService.get_list(is_deleted=False)
+
+
+class CreateGeometryApiView(generics.GenericAPIView):
+    serializer_class = GeometryCreateSerializer
+    def post(self, request):
+        serializer = GeometryCreateSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            GeoObject.objects.create(**serializer.validated_data)
+            return response.Response(data=serializer.data)
+        return response.Response(data=serializer.errors)
+        
