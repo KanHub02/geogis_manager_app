@@ -13,6 +13,7 @@ class DistrictSerializer(GeoFeatureModelSerializer):
 class RegionSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Region
+        
         geo_field = "geometry"
         fields = ("id", "title")
 
