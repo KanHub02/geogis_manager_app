@@ -13,6 +13,8 @@ GeoDjango Project
 
     cd geo_management_app
 
+Создайте src/.env используя данные с src/.env.example
+
 Соберите и запустите контейнеры Docker с помощью команды:
 
     docker-compose up --build
