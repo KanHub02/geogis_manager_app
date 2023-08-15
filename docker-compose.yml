@@ -34,8 +34,58 @@ services:
     env_file:
       - ./src/.env
 
+  graphql-engine:
+      image: hasura/graphql-engine:v2.31.0
+      ports:
+        - "8088:8088"
+      restart: always
+      environment:
+        HASURA_GRAPHQL_METADATA_DATABASE_URL: postgresql://geo_management_user:geo_management_password@db:5432/geo_management_db
+        PG_DATABASE_URL: postgresql://geo_management_user:geo_management_password@db:5432/geo_management_db
+        HASURA_GRAPHQL_ENABLE_ALLOWLIST: "true"
+        HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+        HASURA_GRAPHQL_DEV_MODE: "true"
+        HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+        HASURA_GRAPHQL_METADATA_DEFAULTS: '{"backend_configs":{"dataconnector":{"athena":{"uri":"http://data-connector-agent:8081/api/v1/athena"},"mariadb":{"uri":"http://data-connector-agent:8081/api/v1/mariadb"},"mysql8":{"uri":"http://data-connector-agent:8081/api/v1/mysql"},"oracle":{"uri":"http://data-connector-agent:8081/api/v1/oracle"},"snowflake":{"uri":"http://data-connector-agent:8081/api/v1/snowflake"}}}}'
+      depends_on:
+        data-connector-agent:
+          condition: service_healthy
+      networks:
+        - db_network
+
+  data-connector-agent:
+      image: hasura/graphql-data-connector:v2.31.0
+      restart: always
+      ports:
+        - 8081:8081
+      environment:
+        QUARKUS_LOG_LEVEL: ERROR
+        QUARKUS_OPENTELEMETRY_ENABLED: "false"
+        ## QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8081/api/v1/athena/health"]
+        interval: 5s
+        timeout: 10s
+        retries: 5
+        start_period: 5s
+  geoserver:
+        image: kartoza/geoserver:2.23.1
+        volumes:
+          - geoserver-data:/opt/geoserver/data_dir
+        ports:
+          - 8080:8080
+        restart: on-failure
+        env_file:
+            - ./src/.env   
+        healthcheck:
+          test: "curl --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null -u ${GEOSERVER_ADMIN_USER}:'${GEOSERVER_ADMIN_PASSWORD}' http://localhost:8080/geoserver/rest/about/version.xml"
+          interval: 1m30s
+          timeout: 10s
+          retries: 3
+
 volumes:
   database_volume:
+  geoserver-data:
 
 networks:
   db_network:
