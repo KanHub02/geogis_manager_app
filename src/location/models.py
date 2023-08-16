@@ -92,4 +92,3 @@ class GeoObject(GeoBaseModel):
     class Meta:
         verbose_name = "Обьект"
         verbose_name_plural = "Обьекты"
-    

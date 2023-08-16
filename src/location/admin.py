@@ -7,25 +7,31 @@ from .models import Canton, Contour, Region, District, GeoObject
 
 admin.site.register(Contour)
 
+
 class ContourInline(admin.TabularInline):
     model = Contour
-    fields = ["geometry", ]
+    fields = [
+        "geometry",
+    ]
+
 
 class RegionInline(admin.TabularInline):
     model = Region
     fields = ["title", "geometry", "is_deleted"]
     readonly_fields = ["is_deleted"]
 
+
 class DistrictInline(admin.TabularInline):
     model = District
     fields = ["title", "geometry", "is_deleted"]
     readonly_fields = ["is_deleted"]
-    
+
+
 class CantonInline(admin.TabularInline):
     model = Canton
     fields = ["title", "geometry", "is_deleted"]
     readonly_fields = ["is_deleted"]
-    
+
 
 @admin.register(Region)
 class RegionAdmin(LeafletGeoAdmin):
@@ -33,7 +39,9 @@ class RegionAdmin(LeafletGeoAdmin):
     list_display_links = ["title", "id"]
     readonly_fields = ["id", "created_at", "updated_at"]
     fields = ["title", "geometry", "is_deleted"]
-    inlines = [DistrictInline, ]
+    inlines = [
+        DistrictInline,
+    ]
 
 
 @admin.register(Canton)
@@ -42,7 +50,9 @@ class CantonAdmin(LeafletGeoAdmin):
     list_display_links = ["title", "id"]
     readonly_fields = ["id", "created_at", "updated_at"]
     fields = ["title", "geometry", "is_deleted"]
-    inlines = [ContourInline,]
+    inlines = [
+        ContourInline,
+    ]
 
 
 @admin.register(District)

@@ -8,16 +8,22 @@ from .serializers import (
     DistrictSerializer,
     RegionSerializer,
     CantonSerializer,
-    GeometryCreateSerializer
+    GeometryCreateSerializer,
 )
 
 from .services import RegionService, ContourService, CantonService, DistrictService
-from .schemas import ContourListSchema, CantonListSchema, DistrictListSchema, RegionListSchema
+from .schemas import (
+    ContourListSchema,
+    CantonListSchema,
+    DistrictListSchema,
+    RegionListSchema,
+)
 from .models import GeoObject
 
 
 class ContourListView(generics.ListAPIView):
     """This class view filter(optional) and returns a list of Contour, according to all standards GeoJson"""
+
     serializer_class = ContourSerializer
     filter_backends = [filters.DjangoFilterBackend]
     filterset_fields = ("canton__district", "canton__district__region")
@@ -29,6 +35,7 @@ class ContourListView(generics.ListAPIView):
 
 class DistrictListView(generics.ListAPIView):
     """This class view returns a list of District, according to all standards GeoJson"""
+
     serializer_class = DistrictSerializer
     schema = DistrictListSchema()
 
@@ -38,6 +45,7 @@ class DistrictListView(generics.ListAPIView):
 
 class CantonListView(generics.ListAPIView):
     """This class view returns a list of Canton, according to all standards GeoJson"""
+
     serializer_class = CantonSerializer
     schema = CantonListSchema()
 
@@ -47,6 +55,7 @@ class CantonListView(generics.ListAPIView):
 
 class RegionListView(generics.ListAPIView):
     """This class view returns a list of Region, according to all standards GeoJson"""
+
     serializer_class = RegionSerializer
     schema = RegionListSchema()
 
@@ -56,10 +65,10 @@ class RegionListView(generics.ListAPIView):
 
 class CreateGeometryApiView(generics.GenericAPIView):
     serializer_class = GeometryCreateSerializer
+
     def post(self, request):
         serializer = GeometryCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             GeoObject.objects.create(**serializer.validated_data)
             return response.Response(data=serializer.data)
         return response.Response(data=serializer.errors)
-        

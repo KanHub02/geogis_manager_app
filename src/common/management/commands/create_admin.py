@@ -3,8 +3,10 @@ from django.contrib.auth.models import User
 
 import logging
 
+
 class Command(BaseCommand):
     help = 'Create admin phone_number=+996000000000 password="adminadmin"'
+
     def handle(self, *args, **options):
         try:
             admin = User.objects.filter(username="admin").first()

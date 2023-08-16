@@ -79,14 +79,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 LEAFLET_CONFIG = {
-    'PLUGINS': {
-        'forms': {
-            'auto-include': True
-        }
-        
-    },
-    'TILES': [("Open Street","http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {'attribution': '&copy; Open Street', 'maxZoom': 16}),
-              ("Google Maps", 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {'attribution': '&copy; Google Maps Street', "subdomains":['mt0','mt1','mt2','mt3']})]
+    "PLUGINS": {"forms": {"auto-include": True}},
+    "TILES": [
+        (
+            "Open Street",
+            "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {"attribution": "&copy; Open Street", "maxZoom": 16},
+        ),
+        (
+            "Google Maps",
+            "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+            {
+                "attribution": "&copy; Google Maps Street",
+                "subdomains": ["mt0", "mt1", "mt2", "mt3"],
+            },
+        ),
+    ],
 }
 
 # DATABASE settings
@@ -103,7 +111,7 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 # Password validation
@@ -140,5 +148,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-

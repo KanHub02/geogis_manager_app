@@ -32,13 +32,11 @@ class ContourSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Contour
         geo_field = "geometry"
-        fields = ("id",)        
+        fields = ("id",)
 
 
 class GeometryCreateSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = GeoObject
         geo_field = "geometry"
-        fields = ("title",)    
-
-        
+        fields = ("title",)
