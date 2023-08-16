@@ -11,7 +11,7 @@ services:
     env_file:
       - ./src/.env
     entrypoint: "sh /opt/services/geo-management/entrypoints/start-server.sh"
-    volumes:
+    volumes:  
       - ./:/opt/services/geo-management
       - ./src/static:/opt/services/geo-management/src/static
       - ./src/media:/opt/services/geo-management/src/media
@@ -61,31 +61,29 @@ services:
       environment:
         QUARKUS_LOG_LEVEL: ERROR
         QUARKUS_OPENTELEMETRY_ENABLED: "false"
-        ## QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:8081/api/v1/athena/health"]
         interval: 5s
         timeout: 10s
         retries: 5
         start_period: 5s
+
   geoserver:
-        image: kartoza/geoserver:2.23.1
-        volumes:
-          - geoserver-data:/opt/geoserver/data_dir
-        ports:
-          - 8080:8080
-        restart: on-failure
-        env_file:
-            - ./src/.env   
-        healthcheck:
-          test: "curl --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null -u ${GEOSERVER_ADMIN_USER}:'${GEOSERVER_ADMIN_PASSWORD}' http://localhost:8080/geoserver/rest/about/version.xml"
-          interval: 1m30s
-          timeout: 10s
-          retries: 3
+    container_name: geoserver_container
+    image: kartoza/geoserver
+    ports:
+      - 8080:8080
+
+    environment:
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: adminpass
+      
+    networks:
+      - db_network
+    
 
 volumes:
   database_volume:
-  geoserver-data:
 
 networks:
   db_network:
