@@ -5,6 +5,8 @@ echo " --- Migrate"
 python src/manage.py migrate
 echo " --- Collect static files"
 python src/manage.py collectstatic --no-input
+echo " --- Startint tests"
+python3 src/manage.py test src/tests/
 echo " --- Start server"
 cd src/
 gunicorn core.wsgi --bind 0.0.0.0:1111 --workers 4 --threads 4 --reload
