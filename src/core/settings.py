@@ -26,6 +26,7 @@ THEME_APPS = [
 LOCAL_APPS = [
     "location.apps.LocationConfig",
     "common.apps.CommonConfig",
+    "scripts.apps.ScriptsConfig",
 ]
 
 THIRD_PARTY_APPS = [
